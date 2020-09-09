@@ -71,7 +71,7 @@ def main():
     for epoch in range(0, args.es):
         print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
         train_features,train_labels = train( optimizer, net, trainloader, criterion)
-        visualization(train_features, train_labels)
+        # visualization(train_features, train_labels)
         test_features, test_labels = test(net,testloader,criterion)
         visualization(test_features, test_labels)
         scheduler.step()
