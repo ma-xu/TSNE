@@ -91,7 +91,6 @@ def train(epoch):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
             % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-
 def test(epoch):
     global best_acc
     net.eval()
@@ -114,8 +113,8 @@ def test(epoch):
 
 
 for epoch in range(0, args.es):
-    scheduler.step()
     train(epoch)
     test(epoch)
+    scheduler.step()
 
 
