@@ -15,6 +15,7 @@ import argparse
 from resnet import ResNet18
 from utils import *
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 
 
 
@@ -142,6 +143,9 @@ def visualization(featureList, labelList):
         feature = torch.cat([feature,featureList[i]],dim=0)
         label = torch.cat([label, labelList[i]], dim=0)
     feature =feature.cpu().detach().numpy()
+    # Using PCA to reduce dimension to a reasonable dimension as recommended in
+    # https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
+    feature = PCA(n_components=50).fit(feature)
     feature_embedded = TSNE(n_components=2).fit_transform(feature)
     print(f"feature shape: {feature.shape}")
     print(f"feature_embedded shape: {feature_embedded.shape}")
