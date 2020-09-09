@@ -7,5 +7,5 @@ Clone this repo and run the code
 ```bash
 $ git clone https://github.com/13952522076/TSNE.git
 $ cd TSNE
-$ python3 main.py 
+$ python3 cifar.py 
 ```
