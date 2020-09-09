@@ -70,7 +70,9 @@ def main():
     for epoch in range(0, args.es):
         print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
         train_features,train_labels = train( optimizer, net, trainloader, criterion)
+        visualization(train_features, train_labels)
         test_features, test_labels = test(net,testloader,criterion)
+        visualization(test_features, test_labels)
         scheduler.step()
 
 
@@ -128,6 +130,18 @@ def test(net,testloader,criterion):
                 % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
     return test_features, test_labels
+
+
+def visualization(featureList, labelList):
+    assert len(featureList) == len(labelList)
+    assert len(featureList) > 0
+    feature = featureList[0]
+    label = labelList[0]
+    for i in range(1, len(labelList)):
+        feature = torch.cat([feature,featureList[i]],dim=0)
+        label = torch.cat([label, labelList[i]], dim=0)
+    print(f"feature shape: {feature.shape}")
+    print(f"label shape: {label.shape}")
 
 if __name__ == '__main__':
     main()
