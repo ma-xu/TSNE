@@ -12,8 +12,8 @@ from torch.optim import lr_scheduler
 
 import os
 import argparse
-from .resnet import ResNet18
-from .utils import *
+from resnet import ResNet18
+from utils import *
 
 
 
