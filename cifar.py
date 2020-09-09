@@ -68,24 +68,26 @@ def main():
     scheduler = lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
 
     for epoch in range(0, args.es):
-        train(epoch, optimizer, net, trainloader, criterion)
-        test(epoch,net,testloader,criterion)
+        print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
+        train_features,train_labels = train( optimizer, net, trainloader, criterion)
+        test_features, test_labels = test(net,testloader,criterion)
         scheduler.step()
 
 
 # Training
-def train(epoch, optimizer, net, trainloader, criterion):
-    print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
+def train( optimizer, net, trainloader, criterion):
     net.train()
     train_loss = 0
     correct = 0
     total = 0
-
+    train_features = []
+    train_labels = []
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         features, outputs = net(inputs)
-        print(features.shape)
+        train_features.append(features)
+        train_labels.append(targets)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -98,17 +100,23 @@ def train(epoch, optimizer, net, trainloader, criterion):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
             % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+    return train_features,train_labels
 
-def test(epoch,net,testloader,criterion):
+def test(net,testloader,criterion):
     global best_acc
     net.eval()
     test_loss = 0
     correct = 0
     total = 0
+
+    test_features = []
+    test_labels = []
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
             features, outputs = net(inputs)
+            test_features.append(features)
+            test_labels.append(targets)
             loss = criterion(outputs, targets)
 
             test_loss += loss.item()
@@ -119,6 +127,7 @@ def test(epoch,net,testloader,criterion):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                 % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+    return test_features, test_labels
 
 if __name__ == '__main__':
     main()
