@@ -162,5 +162,12 @@ def visualization(featureList, labelList, select_indx):
     print(f"feature_embedded shape: {feature_embedded.shape}")
     print(f"label shape: {label.shape}")
 
+    uni_label = torch.unique(label)
+    dict={}
+    for temp in uni_label:
+        idx = (label == temp).nonzero()
+        fea = feature[idx,:]
+        dict.temp = fea
+
 if __name__ == '__main__':
     main()
