@@ -1,23 +1,23 @@
 from __future__ import print_function
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-import torch.backends.cudnn as cudnn
+import argparse
+import os.path as osp
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+
+import torch.optim as optim
+import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 
-import os
-import os.path as osp
-import numpy as np
-import argparse
 from resnet import ResNet18
 from utils import *
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
+
 
 
 
@@ -82,6 +82,8 @@ def main():
     for epoch in range(0, args.es):
         print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
         train_features,train_labels = train( optimizer, net, trainloader, criterion)
+        fea, label = embedding(train_features, train_labels, select_train)
+        plot_features(fea, label, 10, epoch, 'train/')
         # embedding(train_features, train_labels, select_train)
         test_features, test_labels = test(net,testloader,criterion)
         fea, label = embedding(test_features, test_labels, select_test)
