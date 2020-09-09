@@ -166,7 +166,7 @@ def visualization(featureList, labelList, select_indx):
     dict={}
     for temp in uni_label:
         idx = (label == temp).nonzero()
-        fea = feature[idx,:]
+        fea = feature_embedded[idx,:]
         dict.temp = fea
 
 if __name__ == '__main__':
