@@ -31,7 +31,7 @@ parser.add_argument('--es', default=100, type=int, help='epoch size')
 parser.add_argument('--stepsize', type=int, default=30)
 parser.add_argument('--gamma', type=float, default=0.1, help="learning rate decay")
 parser.add_argument('--number', type=int, default=1000, help="Random select N exmaples for plotting")
-parser.add_argument('--save-dir', type=str, default='image')
+parser.add_argument('--save-dir', type=str, default='images')
 args = parser.parse_args()
 
 
