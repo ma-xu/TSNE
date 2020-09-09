@@ -28,6 +28,7 @@ parser.add_argument('--bs', default=512, type=int, help='batch size')
 parser.add_argument('--es', default=100, type=int, help='epoch size')
 parser.add_argument('--stepsize', type=int, default=30)
 parser.add_argument('--gamma', type=float, default=0.1, help="learning rate decay")
+parser.add_argument('--number', type=int, default=1000, help="Random select N exmaples for plotting")
 args = parser.parse_args()
 
 
@@ -53,6 +54,7 @@ def main():
     ])
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    print(f"train set len: {trainset.__len__()}")
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.bs, shuffle=True, num_workers=4)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
     testloader = torch.utils.data.DataLoader(testset, batch_size=args.bs, shuffle=False, num_workers=4)
@@ -142,6 +144,7 @@ def visualization(featureList, labelList):
     for i in range(1, len(labelList)):
         feature = torch.cat([feature,featureList[i]],dim=0)
         label = torch.cat([label, labelList[i]], dim=0)
+
     feature =feature.cpu().detach().numpy()
     # Using PCA to reduce dimension to a reasonable dimension as recommended in
     # https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
