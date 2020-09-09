@@ -7,5 +7,7 @@ Clone this repo and run the code
 ```bash
 $ git clone https://github.com/13952522076/TSNE.git
 $ cd TSNE
-$ python3 cifar.py 
+$ CUDA_VISIBLE_DEVICES=0 python3 cifar.py  
 ```
+Optional paramters:
+'--number': Random select N exmaples for plotting
