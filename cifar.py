@@ -5,12 +5,13 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
-
+import matplotlib.pyplot as plt
 import torchvision
 import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 
 import os
+import os.path as osp
 import numpy as np
 import argparse
 from resnet import ResNet18
@@ -30,6 +31,7 @@ parser.add_argument('--es', default=100, type=int, help='epoch size')
 parser.add_argument('--stepsize', type=int, default=30)
 parser.add_argument('--gamma', type=float, default=0.1, help="learning rate decay")
 parser.add_argument('--number', type=int, default=1000, help="Random select N exmaples for plotting")
+parser.add_argument('--save-dir', type=str, default='image')
 args = parser.parse_args()
 
 
@@ -80,9 +82,11 @@ def main():
     for epoch in range(0, args.es):
         print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
         train_features,train_labels = train( optimizer, net, trainloader, criterion)
-        # visualization(train_features, train_labels, select_train)
+        # embedding(train_features, train_labels, select_train)
         test_features, test_labels = test(net,testloader,criterion)
-        visualization(test_features, test_labels, select_test)
+        fea, label = embedding(test_features, test_labels, select_test)
+        plot_features(fea, label, 10, epoch, 'test/')
+
         scheduler.step()
 
 
@@ -142,7 +146,7 @@ def test(net,testloader,criterion):
     return test_features, test_labels
 
 
-def visualization(featureList, labelList, select_indx):
+def embedding(featureList, labelList, select_indx):
     assert len(featureList) == len(labelList)
     assert len(featureList) > 0
     feature = featureList[0]
@@ -160,16 +164,43 @@ def visualization(featureList, labelList, select_indx):
     # https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
     feature = PCA(n_components=50).fit_transform(feature)
     feature_embedded = TSNE(n_components=2).fit_transform(feature)
-    print(f"feature shape: {feature.shape}")
-    print(f"feature_embedded shape: {feature_embedded.shape}")
-    print(f"label shape: {label.shape}")
+    return feature_embedded, label
+    # print(f"feature shape: {feature.shape}")
+    # print(f"feature_embedded shape: {feature_embedded.shape}")
+    # print(f"label shape: {label.shape}")
 
-    uni_label = np.unique(label)
-    dict={}
-    for temp in uni_label:
-        idx = (label == temp).nonzero()
-        fea = feature_embedded[idx,:]
-        dict[temp] = fea
+    # uni_label = np.unique(label)
+    # dict={}
+    # for temp in uni_label:
+    #     idx = (label == temp).nonzero()
+    #     fea = feature_embedded[idx,:]
+    #     dict[temp] = fea
+
+
+
+def plot_features(features, labels, num_classes, epoch, prefix):
+    """Plot features on 2D plane.
+
+    Args:
+        features: (num_instances, num_features).
+        labels: (num_instances).
+    """
+    colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+    for label_idx in range(num_classes):
+        plt.scatter(
+            features[labels == label_idx, 0],
+            features[labels == label_idx, 1],
+            c=colors[label_idx],
+            s=1,
+        )
+    plt.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], loc='upper right')
+    dirname = osp.join(args.save_dir, prefix)
+    if not osp.exists(dirname):
+        os.mkdir(dirname)
+    save_name = osp.join(dirname, 'epoch_' + str(epoch + 1) + '.png')
+    plt.savefig(save_name, bbox_inches='tight')
+    plt.close()
+
 
 if __name__ == '__main__':
     main()
