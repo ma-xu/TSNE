@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 
 import os
+import numpy as np
 import argparse
 from resnet import ResNet18
 from utils import *
@@ -154,6 +155,7 @@ def visualization(featureList, labelList, select_indx):
     label = label[select_indx]
 
     feature =feature.cpu().detach().numpy()
+    label = label.cpu().detach().numpy()
     # Using PCA to reduce dimension to a reasonable dimension as recommended in
     # https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
     feature = PCA(n_components=50).fit_transform(feature)
@@ -162,7 +164,7 @@ def visualization(featureList, labelList, select_indx):
     print(f"feature_embedded shape: {feature_embedded.shape}")
     print(f"label shape: {label.shape}")
 
-    uni_label = torch.unique(label)
+    uni_label = np.unique(label)
     dict={}
     for temp in uni_label:
         idx = (label == temp).nonzero()
