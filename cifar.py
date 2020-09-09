@@ -54,7 +54,6 @@ def main():
     ])
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-    print(f"train set len: {trainset.__len__()}")
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.bs, shuffle=True, num_workers=4)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
     testloader = torch.utils.data.DataLoader(testset, batch_size=args.bs, shuffle=False, num_workers=4)
@@ -71,12 +70,18 @@ def main():
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     scheduler = lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
 
+    # select N samples for plotting
+    perm_train = torch.randperm(trainset.__len__())
+    select_train = perm_train[:args.number]
+    perm_test = torch.randperm(testset.__len__())
+    select_test = perm_test[:args.number]
+
     for epoch in range(0, args.es):
         print('\nEpoch: %d   Learning rate: %f' % (epoch, optimizer.param_groups[0]['lr']))
         train_features,train_labels = train( optimizer, net, trainloader, criterion)
-        # visualization(train_features, train_labels)
+        # visualization(train_features, train_labels, select_train)
         test_features, test_labels = test(net,testloader,criterion)
-        visualization(test_features, test_labels)
+        visualization(test_features, test_labels, select_test)
         scheduler.step()
 
 
@@ -136,7 +141,7 @@ def test(net,testloader,criterion):
     return test_features, test_labels
 
 
-def visualization(featureList, labelList):
+def visualization(featureList, labelList, select_indx):
     assert len(featureList) == len(labelList)
     assert len(featureList) > 0
     feature = featureList[0]
@@ -144,6 +149,9 @@ def visualization(featureList, labelList):
     for i in range(1, len(labelList)):
         feature = torch.cat([feature,featureList[i]],dim=0)
         label = torch.cat([label, labelList[i]], dim=0)
+
+    feature = feature[select_indx,:]
+    label = label[select_indx]
 
     feature =feature.cpu().detach().numpy()
     # Using PCA to reduce dimension to a reasonable dimension as recommended in
