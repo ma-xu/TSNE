@@ -141,7 +141,8 @@ def visualization(featureList, labelList):
     for i in range(1, len(labelList)):
         feature = torch.cat([feature,featureList[i]],dim=0)
         label = torch.cat([label, labelList[i]], dim=0)
-    feature_embedded = TSNE(n_components=2).fit_transform(feature.cpu().numpy())
+    feature =feature.detach().numpy()
+    feature_embedded = TSNE(n_components=2).fit_transform(feature)
     print(f"feature shape: {feature.shape}")
     print(f"feature_embedded shape: {feature_embedded.shape}")
     print(f"label shape: {label.shape}")
