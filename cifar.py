@@ -25,7 +25,6 @@ os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6,7"
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--resume', '-r',default=False, action='store_true', help='resume from checkpoint')
 parser.add_argument('--bs', default=512, type=int, help='batch size')
 parser.add_argument('--es', default=100, type=int, help='epoch size')
 parser.add_argument('--stepsize', type=int, default=30)
