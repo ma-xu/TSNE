@@ -145,7 +145,7 @@ def visualization(featureList, labelList):
     feature =feature.cpu().detach().numpy()
     # Using PCA to reduce dimension to a reasonable dimension as recommended in
     # https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
-    feature = PCA(n_components=50).fit(feature)
+    feature = PCA(n_components=50).fit_transform(feature)
     feature_embedded = TSNE(n_components=2).fit_transform(feature)
     print(f"feature shape: {feature.shape}")
     print(f"feature_embedded shape: {feature_embedded.shape}")
