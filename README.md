@@ -4,6 +4,9 @@ __Visulize the Intermidiate features of CNN models using TSNE__
 
 In this repo, we use ResNet18 model to classify CIFAR-10 dataset. Then we apply the PCA+TSNE to visualize the features of last FC layer.
 
+## Demo of testing data
+![Img](https://raw.githubusercontent.com/13952522076/TSNE/master/images/result.gif)
+
 ## Get started
 Clone this repo and run the code
 ```bash
